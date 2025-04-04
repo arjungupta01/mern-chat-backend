@@ -12,17 +12,25 @@ userRouter.post("/register", async (req, res) => {
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
     }
+
+    // Make the first registered user an admin
+    const isFirstUser = (await User.countDocuments({})) === 0;
+
     //create the new user
     const user = await User.create({
       username,
       email,
       password,
+      isAdmin: isFirstUser, // First user will be admin
     });
+
     if (user) {
       res.status(201).json({
         _id: user._id,
         username: user.username,
         email: user.email,
+        isAdmin: user.isAdmin,
+        token: generateToken(user._id),
       });
     }
   } catch (error) {
