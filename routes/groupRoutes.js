@@ -1,12 +1,11 @@
 const express = require("express");
 const Group = require("../models/GroupModel");
-const { protect, isAdmin } = require("../middleware/authMiddleware");
-const { trusted } = require("mongoose");
+const { protect } = require("../middleware/authMiddleware");
 
 const groupRouter = express.Router();
 
-//Create a new group
-groupRouter.post("/", protect, isAdmin, async (req, res) => {
+//Create a new group - removed admin middleware
+groupRouter.post("/", protect, async (req, res) => {
   try {
     const { name, description } = req.body;
     const group = await Group.create({
@@ -21,7 +20,6 @@ groupRouter.post("/", protect, isAdmin, async (req, res) => {
     res.status(201).json({ populatedGroup });
   } catch (error) {
     console.log(error);
-
     res.status(400).json({ message: error.message });
   }
 });
