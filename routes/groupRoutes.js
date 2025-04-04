@@ -11,13 +11,13 @@ groupRouter.post("/", protect, async (req, res) => {
     const group = await Group.create({
       name,
       description,
-      admin: req.user._id,
+      admin: req.user._id, // Keep this for reference of who created the group
       members: [req.user._id],
     });
     const populatedGroup = await Group.findById(group._id)
       .populate("admin", "username email")
       .populate("members", "username email");
-    res.status(201).json({ populatedGroup });
+    res.status(201).json(populatedGroup);
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: error.message });
